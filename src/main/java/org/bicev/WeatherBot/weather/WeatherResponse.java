@@ -1,6 +1,8 @@
 package org.bicev.WeatherBot.weather;
 
-
+/**
+ * This class is used to convert weatherstack API response to a Java object.
+ */
 public class WeatherResponse {
 
     private Current current;

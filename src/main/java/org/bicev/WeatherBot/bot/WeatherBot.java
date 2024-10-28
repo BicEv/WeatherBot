@@ -18,17 +18,42 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+/**
+ * The class {@code WeatherBot} is a bot for getting a current weather.
+ * <p>
+ * This bot is processing user commands and messages to get a current weather in
+ * selected cities. User can type "/weather" command and receive an answer with
+ * the city's name request, or select one of buttoned cities.
+ * </p>
+ */
 @Component
 public class WeatherBot extends TelegramLongPollingBot {
 
     @Autowired
     private WeatherService weatherService;
+    
     private Map<Long, Boolean> waitingForCity = new HashMap<>();
 
+    /**
+     * Constructor to create a bot with a given token
+     * 
+     * @param botToken Telegram bot token, gotten from application properties
+     */
     public WeatherBot(@Value("${bot.token}") String botToken) {
         super(botToken);
     }
 
+    /**
+     * This method is processing incoming messages from Telegram such as text
+     * messages and commands
+     * <p>
+     * - if user sent "/weather", bot asks to enter a city name
+     * - if the city was selected, bot sends a current weather
+     * - if the incoming message was other, bot sends possible options
+     * </p>
+     * 
+     * @param update incoming update containing message information
+     */
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -50,6 +75,13 @@ public class WeatherBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Sends a current weather in the city or error message, if the weather is not
+     * present
+     * 
+     * @param chatId the ID of the current chat
+     * @param city   the city's name
+     */
     public void sendWeatherForecast(Long chatId, String city) {
         try {
             WeatherResponse weatherResponse = weatherService.getWeather(city);
@@ -73,6 +105,13 @@ public class WeatherBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Creates a 2 buttons rows via {@link ReplyKeyboardMArkup},
+     * {@link KeyboardRow} and {@link KeyboardButton}, and sends a message
+     * {@link SendMessage} with basic bot instructions
+     * 
+     * @param chatId the ID of the current chat
+     */
     public void sendWeatherOptions(Long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -103,6 +142,12 @@ public class WeatherBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Private method used to send a message in the chat
+     * 
+     * @param chatId the ID of the chat
+     * @param text   the text of the message
+     */
     private void sendMessage(Long chatId, String text) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -114,6 +159,11 @@ public class WeatherBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Returns the name of the bot
+     * 
+     * @return the name of the bot
+     */
     @Override
     public String getBotUsername() {
         return "BicFirst_bot";
