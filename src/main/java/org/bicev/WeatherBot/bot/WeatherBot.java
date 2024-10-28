@@ -31,8 +31,11 @@ public class WeatherBot extends TelegramLongPollingBot {
 
     @Autowired
     private WeatherService weatherService;
-    
+
     private Map<Long, Boolean> waitingForCity = new HashMap<>();
+
+    @Value("${bot.username}")
+    private String botUsername;
 
     /**
      * Constructor to create a bot with a given token
@@ -166,7 +169,7 @@ public class WeatherBot extends TelegramLongPollingBot {
      */
     @Override
     public String getBotUsername() {
-        return "BicFirst_bot";
+        return botUsername;
     }
 
 }
